@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Križić-Kružić</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            background-color: lavender;
+        }
+
+        h1 {
+            margin-top: 50px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background-color: rgb(237, 237, 248);
+            border: 1px solid black;
+        }
+
+        .inputs {
+            width: 212px;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+
+        input {
+            width: 50px;
+            height: 30px;
+            background-color: rgb(237, 237, 248);
+            border: 1px solid darkorchid;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        button {
+            width: 30px;
+            height: 30px;
+            background-color: darkorchid;
+            color: lavender;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .win {
+            background-color: violet;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Križić-Kružić</h1>
+    <!-- nesto malo dizajna jer malo manje placem 
+     kad ne radi a izgleda lijepo bar se nadam da
+     izgleda lijepo :( -->
+    <div class="board">
+        <div class="cell" id="cell0">1</div>
+        <div class="cell" id="cell1">2</div>
+        <div class="cell" id="cell2">3</div>
+        <div class="cell" id="cell3">4</div>
+        <div class="cell" id="cell4">5</div>
+        <div class="cell" id="cell5">6</div>
+        <div class="cell" id="cell6">7</div>
+        <div class="cell" id="cell7">8</div>
+        <div class="cell" id="cell8">9</div>
+    </div>
+
+    <div class="inputs">
+        <div>
+            <input type="number" id="inputX" min="1" max="9">
+            <button onclick="makeMove('X')">X</button>
+        </div>
+        <div>
+            <input type="number" id="inputO" min="1" max="9">
+            <button onclick="makeMove('O')">O</button>
+        </div>
+    </div>
+
+    <p id="status">Igra počinje! Na redu je X.</p>
+
+    <script>
+        var board = ["", "", "", "", "", "", "", "", ""];
+        var xTurn = true;
+        //ako je true onnda je red na x (OG player), suprotno o
+
+        function makeMove(player) {
+            if ((player === 'X' && !xTurn) || (player === 'O' && xTurn)) {
+                alert("Stani malo. Nije vaš red!");
+                return;
+            }
+
+            var inputId = player === "X" ? "inputX" : "inputO";
+            var input = document.getElementById(inputId);
+            var pos = parseInt(input.value) - 1;
+
+            if (isNaN(pos) || pos < 0 || pos > 8) {
+                alert("Molimo unesite broj između 1 i 9.");
+                return;
+            }
+
+            if (board[pos] !== "") {
+                alert("Ovo polje je već zauzeto. Odaberite drugo.");
+                return;
+            }
+
+            board[pos] = player;
+            document.getElementById("cell" + pos).textContent = player;
+            input.value = "";
+
+            if (checkWin(player)) {
+                document.getElementById("status").textContent = "Igrač " + player + " pobjeđuje!";
+                disableInputs();
+                return;
+            }
+
+            if (checkDraw()) {
+                document.getElementById("status").textContent = "Neriješeno!";
+                disableInputs();
+                return;
+            }
+
+            xTurn = !xTurn;
+            document.getElementById("status").textContent = "Na redu je " + (xTurn ? "X" : "O") + ".";
+        }
+
+        function checkWin(player) {
+            var winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // po redu W
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // po stupcima W
+                [0, 4, 8], [2, 4, 6]           // po dijagonali W
+            ];
+
+            for (var i = 0; i < winPatterns.length; i++) {
+                var [a, b, c] = winPatterns[i];
+                if (board[a] === player && board[b] === player && board[c] === player) {
+                    document.getElementById("cell" + a).classList.add("win");
+                    document.getElementById("cell" + b).classList.add("win");
+                    document.getElementById("cell" + c).classList.add("win");
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function checkDraw() {
+            for (var i = 0; i < board.length; i++) {
+                if (board[i] === "") {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function disableInputs() {
+            document.getElementById("inputX").disabled = true;
+            document.getElementById("inputO").disabled = true;
+        }
+    </script>
+
+</body>
+
+</html>
