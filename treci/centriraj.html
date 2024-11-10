@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centriraj poruku</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: lavender;
+        }
+
+        label {
+            margin-left: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 60%;
+            background-color: rgb(237, 237, 248);
+            border: 1px solid darkorchid;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 16px;
+            margin: 15px auto;
+        }
+
+        button {
+            background-color: darkorchid;
+            color: lavender;
+            width: 30%;
+            padding: 10px;
+            margin: 15px auto;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #output {
+            white-space: pre-wrap;
+            padding: 10px;
+            font-family: monospace;
+            margin-top: 15px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 style="text-align: center;">Centriraj poruku</h1>
+
+        <label for="maxChars">Maksimalan broj znakova po liniji:</label>
+        <input type="number" id="maxChars" min="1" required>
+
+        <label for="lineLength">Dužina linije:</label>
+        <input type="number" id="lineLength" min="1" required>
+
+        <label for="inputText">Unesite tekst:</label>
+        <textarea id="inputText" rows="6"></textarea>
+
+        <button onclick="alignText()">Poravnaj tekst</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function alignText() {
+            const maxLineChars = parseInt(document.getElementById("maxChars").value);
+            const lineLength = parseInt(document.getElementById("lineLength").value);
+            const text = document.getElementById("inputText").value;
+            const words = text.split(" ");
+            let lines = [];
+            let currentLine = "";
+
+            words.forEach(word => {
+                if ((currentLine + word).length <= maxLineChars) {
+                    currentLine += (currentLine ? " " : "") + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            });
+            if (currentLine) lines.push(currentLine);
+
+            let centeredText = lines.map(line => {
+                const spaces = Math.floor((lineLength - line.length) / 2);
+                return " ".repeat(spaces) + line;
+            }).join("\n");
+
+            document.getElementById("output").textContent = centeredText;
+        }
+    </script>
+
+</body>
+
+</html>
